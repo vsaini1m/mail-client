@@ -1,16 +1,18 @@
-import java.io.IOException;  
+import java.io.IOException;
 import java.util.Properties;
-import java.util.Scanner;
 
 import javax.mail.Address;
-import javax.mail.Folder;  
-import javax.mail.Message;  
+import javax.mail.FetchProfile;
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.internet.MimeMessage;
 
 import com.sun.mail.pop3.POP3Store;  
   
@@ -18,67 +20,40 @@ public class ReceiveMail{
   
  public static void receiveEmail(String pop3Host, String storeType,  
   String user, String password,String folder) {  
-  try {  
-   //1) get the session object  
-   Properties properties = new Properties();  
-   
-   
-   properties.setProperty("mail.pop3.ssl.enable", "false");
-   properties.setProperty("mail.pop3.starttls.enable", "true"); 
-   properties.setProperty("mail.pop3.starttls.required", "true");
-   
-   properties.setProperty("mail.pop3.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-   properties.setProperty("mail.pop3.socketFactory.fallback", "false");
-   properties.setProperty( "mail.pop3.host", pop3Host );
-   properties.setProperty( "mail.pop3.user",user);
-   properties.setProperty( "mail.pop3.password",password);
-   properties.setProperty( "mail.pop3.ssl.enable", "false");
-   properties.setProperty( "mail.pop3.port", "445" );
-   properties.setProperty( "mail.pop3.auth", "true" );      
-   properties.setProperty("mail.pop3.starttls.enable", "true");
-   
-   
-   
-   
-   
-   
-   Session emailSession = Session.getDefaultInstance(properties);  
-     
-   //2) create the POP3 store object and connect with the pop server  
-   POP3Store emailStore = (POP3Store) emailSession.getStore(storeType);  
-   emailStore.connect(user, password);  
-  
-   //3) create the folder object and open it  
-   Folder emailFolder = emailStore.getDefaultFolder();  
-   
-   
-   emailFolder.open(Folder.READ_ONLY);  
-  
-   //4) retrieve the messages from the folder in an array and print it  
-   Message[] messages = emailFolder.getMessages();  
-   for (int i = 0; i < messages.length; i++) {  
-    Message message = messages[i];  
-    System.out.println("---------------------------------");  
-    System.out.println("Email Number " + (i + 1));  
-    System.out.println("Subject: " + message.getSubject());  
-    System.out.print("From: " );  
-    
-    
-    for (Address s :  message.getFrom()) {
-		System.out.println("\t "+s.toString());
-	}
-    
-    System.out.println("Text: " + message.getContent().toString());  
-   }  
-  
-   //5) close the store and folder objects  
-   emailFolder.close(false);  
-   emailStore.close();  
-  
-  } catch (NoSuchProviderException e) {e.printStackTrace();}   
-  catch (MessagingException e) {e.printStackTrace();}  
-  catch (IOException e) {e.printStackTrace();}  
- }  
+	 try {  
+		   //1) get the session object  
+		   Properties properties = new Properties();  
+		   properties.put("mail.pop3.host", pop3Host);  
+		   Session emailSession = Session.getDefaultInstance(properties);  
+		     
+		   //2) create the POP3 store object and connect with the pop server  
+		   POP3Store emailStore = (POP3Store) emailSession.getStore(storeType);  
+		   emailStore.connect(user, password);  
+		  
+		   //3) create the folder object and open it  
+		   Folder emailFolder = emailStore.getFolder("INBOX");  
+		   emailFolder.open(Folder.READ_ONLY);  
+		  
+		   //4) retrieve the messages from the folder in an array and print it  
+		   Message[] messages = emailFolder.getMessages();  
+		   for (int i = 0; i < messages.length; i++) {  
+		    Message message = messages[i];  
+		    System.out.println("---------------------------------");  
+		    System.out.println("Email Number " + (i + 1));  
+		    System.out.println("Subject: " + message.getSubject());  
+		    System.out.println("From: " + message.getFrom()[0]);  
+		    System.out.println("Text: " + message.getContent().toString());  
+		   }  
+		  
+		   //5) close the store and folder objects  
+		   emailFolder.close(false);  
+		   emailStore.close();  
+		  
+		  } catch (NoSuchProviderException e) {e.printStackTrace();}   
+		  catch (MessagingException e) {e.printStackTrace();}  
+		  catch (IOException e) {e.printStackTrace();}  
+		 }  
+		  
   
 public static void main(String[] args) {  
 	 
@@ -100,7 +75,8 @@ public static void main(String[] args) {
 	 System.out.println("Enter The Folder :");
 	 String inputFolder = scanner.nextLine();
 	*/
-	
+	 System.setProperty("javax.net.ssl.trustStore", "trust-store.jks");
+	  System.setProperty("javax.net.ssl.trustStorePassword", "TrustStore");
 	
 	 
   String host = "mail.shivit.in";//change accordingly  
@@ -110,10 +86,10 @@ public static void main(String[] args) {
   
   receiveEmail(host, mailStoreType, username, password,"INBOX");  //INBOX
 
-	// receiveEmail(inputHost,inputMailStoreType,inputUsername,inputPassword,inputFolder);
+	//receiveEmail(inputHost,inputMailStoreType,inputUsername,inputPassword,inputFolder);
 	 
 	
-	//reciveMailByGmail("vinitsaiin357@gmail.com", "21nJk6%34{.#~j)`+'");
+//	reciveMailByGmail("vinitsaini357@gmail.com", "21nJk6%34{.#~j)`+'");
 	 
  }  
  
@@ -233,4 +209,32 @@ public static void main(String[] args) {
 	     e.printStackTrace();
 	 }
 }
+ 
+ public void process(MimeMessage message) throws Exception{
+     Folder folder = message.getFolder();
+     folder.open(Folder.READ_WRITE);
+     String messageId = message.getMessageID();
+     Message[] messages = folder.getMessages();
+     FetchProfile contentsProfile = new FetchProfile();
+     contentsProfile.add(FetchProfile.Item.ENVELOPE);
+     contentsProfile.add(FetchProfile.Item.CONTENT_INFO);
+     contentsProfile.add(FetchProfile.Item.FLAGS);
+     folder.fetch(messages, contentsProfile);
+     // find this message and mark for deletion
+     for (int i = 0; i < messages.length; i++) {
+         if (((MimeMessage) messages[i]).getMessageID().equals(messageId)) {
+             messages[i].setFlag(Flags.Flag.DELETED, true);
+             break;
+         }
+     }
+
+  /*   Folder somethingFolder = store.getFolder("SOMETHING"));
+     somethingFolder.appendMessages(new MimeMessage[]{message});
+     folder.expunge();
+     folder.close(true);
+     somethingFolder.close(false);*/
+ }
+ 
+ 
+
 }  

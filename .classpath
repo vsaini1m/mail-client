@@ -4,5 +4,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="jars/activation.jar"/>
 	<classpathentry kind="lib" path="jars/mail.jar"/>
+	<classpathentry kind="lib" path="jars/google-api-client-1.23.0.jar"/>
+	<classpathentry kind="lib" path="jars/google-oauth-client-jetty-1.23.0.jar"/>
+	<classpathentry kind="lib" path="jars/google-api-services-gmail-v1-rev83-1.23.0.jar"/>
+	<classpathentry kind="lib" path="jars/google-api-client-auth-oauth2-1.2.3-alpha.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
