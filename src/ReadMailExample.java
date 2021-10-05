@@ -37,6 +37,7 @@ public class ReadMailExample {
 
 			// retrieve the messages from the folder in an array and print it
 			Message[] messages = inbox.search(new FlagTerm(new Flags(Flag.SEEN), false));
+			
 			System.out.println("messages.length---" + messages.length);
 
 			for (int i = 0, n = messages.length; i < n; i++) {
