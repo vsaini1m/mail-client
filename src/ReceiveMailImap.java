@@ -25,7 +25,7 @@ public class ReceiveMailImap {
       Session session = Session.getDefaultInstance(props, null);
       // session.setDebug(true);
       store = session.getStore("imaps");
-      store.connect("imap.gmail.com","vinitsaini357@gmail.com", "21nJk6%34{.#~j)`+'");
+      store.connect("imap.gmail.com","vinitsaini357@gmail.com", "Gkj8(_(+$N}[hjk%ge");
       folder = store.getFolder("[Gmail]/Sent Mail");
       /* Others GMail folders :
        * [Gmail]/All Mail   This folder contains all of your Gmail messages.

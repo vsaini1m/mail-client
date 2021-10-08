@@ -26,7 +26,7 @@ public class GoogleAllFolders {
 		try {
 			Session session = Session.getInstance(props, null);
 			Store store = session.getStore();
-			store.connect("imap.gmail.com", "vinitsaini357@gmail.com", "21nJk6%34{.#~j)`+'");
+			store.connect("imap.gmail.com", "vinitsaini357@gmail.com", "Gkj8(_(+$N}[hjk%ge");
 			Folder[] folderList = store.getFolder("[Gmail]").list();
 			for (int round = 0; round < folderList.length; round++) {
 
